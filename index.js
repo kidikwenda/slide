@@ -1,17 +1,29 @@
 const express = require('express');
 const path = require('path');
 
-app = new express();
+const app = express();
+const PORT = 3000;
 
-app.set('view engine', 'ejs');
-app.engine('ejs', require('ejs').__express);
-app.set('views', path.join(__dirname, 'views'));
+// Middleware para servir arquivos estáticos
+app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/', function(req, res){
-    res.render('welcome');
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'img01.png'));
 });
 
-app.listen(8080, function(){
-    console.log('listening on 8080');
+app.get('/urls', (req, res) => {
+    res.send([
+        'tis.mp4', 'tis.png'
+    ])
 });
 
+app.get('/send', (req, res) => {
+    res.send([
+        'tis.mp4', 'tis.png'
+    ])
+});
+
+
+app.listen(PORT, () => {
+    console.log(`Servidor estático rodando em http://localhost:${PORT}`);
+});
