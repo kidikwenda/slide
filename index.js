@@ -23,7 +23,6 @@ app.get('/send', (req, res) => {
     ])
 });
 
-
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
     console.log(`Servidor estático rodando em http://localhost:${PORT}`);
 });
