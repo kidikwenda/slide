@@ -78,12 +78,8 @@
 
         async function initializeCarousel() {
             let files = await filesName();
-            console.log(files);
-            files = files.filter((value) => {
-                return value !== 'background_image.png'
-            }
-                        );
-            console.log(files);
+            
+            files = files.filter((value) => value !== 'background_image.png');
 
             clearInterval(carouselInterval);
 
@@ -110,7 +106,6 @@
         async function carouselCicle() {
             var parent = document.getElementsByClassName("container")[0];
             let child = parent.children[currentIndex];
-            console.log(currentIndex);
             if (child) {
                 if(child.style.opacity !== "1"){
                     child.style.opacity = 1;
