@@ -6,6 +6,7 @@ const app = express();
 const PORT = 3333;
 
 app.set('view engine', 'ejs');
+app.use(express.json())
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', (req, res) => {
@@ -18,7 +19,29 @@ app.get('/urls', (req, res) => {
     fs.readdir(path.join(__dirname, 'public'), (error, file) => {
         res.send(file);
     })
-    // res.send([])
+});
+
+const authorization = 'Basic V2lsbGlhbU9saXZlaXJhOldPMTIzNA==';
+app.post('/baterry', (req, res) => {
+    const { cabineId } = req.body;
+    const _cabineId = (cabineId + '').toString().trim();
+    console.log('cabineId');
+    console.log(_cabineId);
+    console.log(req.body);
+    const options = {
+        method: 'POST',
+        mode: "cors",
+        credentials: "include",
+        headers: {
+            'User-Agent': 'insomnia/9.2.0',
+            Authorization: authorization
+        }
+    };
+    
+    fetch(`https://developer.chargenow.top/cdb-open-api/v1/rent/order/create?deviceId=${_cabineId}&callbackURL=https%3A%2F%2Ftrumunus-api-61df450d16d7.herokuapp.com%2F`, options)
+        .then(response => response.json())
+        .then(response => res.send(response))
+        .catch(err => res.send(err));
 });
 
 app.listen(PORT, '0.0.0.0', () => {
