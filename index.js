@@ -1,12 +1,19 @@
 const express = require('express');
+var cors = require('cors')
 const path = require('path');
 const fs = require('fs');
 
 const app = express();
 const PORT = 3333;
 
+var corsOptions = {
+    origin: '*',
+    optionsSuccessStatus: 200
+  }
+
 app.set('view engine', 'ejs');
 app.use(express.json())
+app.use(cors(corsOptions))
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', (req, res) => {
