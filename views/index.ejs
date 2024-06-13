@@ -1,2 +1,133 @@
-<div>oi</div>
-<img src="/IMG_0999.jpg" alt="" />
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            background-image: url("background_image.png");
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-color: #04165D;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            object-fit: fill;
+            transition: all 1.2s linear;
+            z-index: -10;
+        }
+
+        .videos {
+            opacity: 0;
+        }
+
+        .imagens {
+            opacity: 0;
+            transition: opacity 2s;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            object-fit: fill;
+            z-index: -10;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container"></div>
+
+    <script>
+        var currentIndex = 0;
+        var filesAuxToCompare = [];
+
+        window.onload = function () {
+            initializeCarousel();
+        };
+
+        async function filesName() {
+            let urls = await fetch('/urls').then((value) => value.json()).catch((error) => []);
+            return urls;
+        }
+
+        function getFileType(fileName) {
+            const extension = fileName.split(".").pop();
+            return extension;
+        }
+
+        function checkIfImage(fileName) {
+            return (
+                getFileType(fileName) === "png" ||
+                getFileType(fileName) === "jpg" ||
+                getFileType(fileName) === "jpeg" ||
+                getFileType(fileName) === "gif"
+            );
+        }
+
+        function checkIfVideo(fileName) {
+            return getFileType(fileName) === "mp4";
+        }
+
+        async function initializeCarousel() {
+            let files = await filesName();
+            
+            files = files.filter((value) => value !== 'background_image.png');
+
+            clearInterval(carouselInterval);
+
+            document.getElementsByClassName("container")[0].innerHTML = "";
+
+            for (let i = 0; i < files.length; i++) {
+                if (checkIfImage(files[i])) {
+                    document.getElementsByClassName("container")[0].innerHTML += `<img src="${files[i]}" class="imagens" id="file_${[i]}" />`;
+                } else if (checkIfVideo(files[i])) {
+                    document.getElementsByClassName("container")[0].innerHTML += `<video muted id="file_${[i]}" class="videos"><source src="${files[i]
+                        }" type="video/mp4"/></video>`;
+                }
+            }
+
+            startCarousel();
+        }
+
+        var carouselInterval;
+
+        function startCarousel(){
+            carouselInterval = setInterval(carouselCicle, 1000);
+        }
+
+        async function carouselCicle() {
+            var parent = document.getElementsByClassName("container")[0];
+            let child = parent.children[currentIndex];
+            if (child) {
+                if(child.style.opacity !== "1"){
+                    child.style.opacity = 1;
+                    if(child.tagName === "IMG"){
+                        setTimeout(() => {
+                            currentIndex++;
+                            child.style.opacity = 0;
+                        }, 10000);
+                    }else{
+                        await child.play();
+                        child.onended = function () {
+                            currentIndex++;
+                            child.style.opacity = 0;
+                        };
+                    }
+                }
+            }else{
+                currentIndex = 0;
+                initializeCarousel();
+            }
+        }
+    </script>
+</body>
+
+</html>

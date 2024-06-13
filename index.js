@@ -16,8 +16,12 @@ app.get('/', (req, res) => {
 
 app.get('/urls', (req, res) => {
     const files = [];
-    fs.readdir(path.join(__dirname, 'public'), (error, file) => {
-        res.send(file);
+    fs.readdir(path.join(__dirname, 'public'), (error, files) => {
+        if(error) {
+            res.send([]);      
+        }else{
+            res.send(files);
+        }
     })
 });
 
