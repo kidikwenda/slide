@@ -1,7 +1,9 @@
+require('dotenv').config()
 const express = require('express');
 var cors = require('cors')
 const path = require('path');
 const fs = require('fs');
+var https = require("https");
 
 const app = express();
 const PORT = 3333;
@@ -18,7 +20,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', (req, res) => {
     res.render('index');
-    // res.sendFile(path.join(__dirname, 'public', 'img01.png'));
 });
 
 app.get('/urls', (req, res) => {
@@ -55,6 +56,13 @@ app.post('/baterry', (req, res) => {
         .catch(err => res.send(err));
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Servidor estático rodando em http://localhost:${PORT}`);
-});
+// app.listen(PORT, '0.0.0.0', () => {
+//     console.log(`Servidor estático rodando em http://localhost:${PORT}`);
+// });
+
+https
+  .createServer({
+    key: fs.readFileSync(process.env.SSL_KEY),
+    cert: fs.readFileSync(process.env.SSL_CERT),
+  }, app)
+  .listen(PORT, '0.0.0.0');
